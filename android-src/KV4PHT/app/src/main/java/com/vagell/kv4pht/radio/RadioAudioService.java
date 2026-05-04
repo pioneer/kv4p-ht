@@ -236,6 +236,9 @@ public class RadioAudioService extends Service {
     private @NonNull RadioAudioServiceCallbacks callbacks = NO_OP_CALLBACKS;
     private final ProtocolHandshake protocolHandshake = new ProtocolHandshake(this);
     private final Handler handler = new Handler(Looper.getMainLooper());
+
+    // === External BLE PTT button ===
+    private BlePttManager blePttManager;
     private static final long CONNECT_RETRY_PERIOD_MS = 500L;
     private final ConnectionController connectionController =
         new ConnectionController(handler, CONNECT_RETRY_PERIOD_MS, this::isConnectionReady, this::attemptUsbConnect);
@@ -281,6 +284,7 @@ public class RadioAudioService extends Service {
         default void forceTunedToFreq(String newFreqStr) {}
         default void forcedPttStart() {}
         default void forcedPttEnd() {}
+        default void blePttStateChanged(BlePttManager.State state) {}
         default void setRadioType(RadioModuleType ratioType) {}
         default void showNotification(String notificationChannelId, int notificationTypeId, String title, String message, String tapIntentName) {}
     }
@@ -415,6 +419,27 @@ public class RadioAudioService extends Service {
         }
     }
 
+    /**
+     * Update the active Bluetooth LE PTT button binding. Pass {@code null} to unpair the
+     * current button. Safe to call before/after the manager is initialized; the new binding
+     * takes effect immediately and survives reconnects.
+     */
+    public void setBlePttBinding(@androidx.annotation.Nullable BlePttBinding binding) {
+        if (blePttManager != null) {
+            blePttManager.setBinding(binding);
+        }
+    }
+
+    @androidx.annotation.Nullable
+    public BlePttManager.State getBlePttState() {
+        return blePttManager != null ? blePttManager.getState() : BlePttManager.State.DISCONNECTED;
+    }
+
+    @androidx.annotation.Nullable
+    public BlePttBinding getBlePttBinding() {
+        return blePttManager != null ? blePttManager.getBinding() : null;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -440,6 +465,26 @@ public class RadioAudioService extends Service {
 
         SecureRandom random = new SecureRandom();
         messageNumber = random.nextInt(APRS_MAX_MESSAGE_NUM); // Start with any Message # from 0-99999, we'll increment it by 1 each tx until restart.
+
+        // Set up the BLE PTT manager. Press/release events funnel through the same internal
+        // handlers as the on-device physical PTT so existing TX setup/teardown logic is reused.
+        blePttManager = new BlePttManager(this);
+        blePttManager.setListener(new BlePttManager.Listener() {
+            @Override
+            public void onPress() {
+                handleExternalPttDown();
+            }
+
+            @Override
+            public void onRelease() {
+                handleExternalPttUp();
+            }
+
+            @Override
+            public void onStateChanged(@NonNull BlePttManager.State state) {
+                callbacks.blePttStateChanged(state);
+            }
+        });
     }
 
     /**
@@ -537,6 +582,10 @@ public class RadioAudioService extends Service {
     public void onDestroy() {
         super.onDestroy();
         tryToStopRadioModule();
+        if (blePttManager != null) {
+            blePttManager.close();
+            blePttManager = null;
+        }
         connectionController.stop();
         protocolHandshake.onDestroy();
 
@@ -1175,11 +1224,11 @@ public class RadioAudioService extends Service {
                 break;
 
             case COMMAND_PHYS_PTT_DOWN:
-                handlePhysicalPttDown();
+                handleExternalPttDown();
                 break;
 
             case COMMAND_PHYS_PTT_UP:
-                handlePhysicalPttUp();
+                handleExternalPttUp();
                 break;
 
             case COMMAND_DEBUG_INFO:
@@ -1234,14 +1283,22 @@ public class RadioAudioService extends Service {
         handleAx25Packet(java.util.Arrays.copyOfRange(param, 1, len));
     }
 
-    private void handlePhysicalPttUp() {
+    /**
+     * Single entry point for any out-of-band PTT release (kv4p on-device button or paired
+     * BLE PTT button). Both paths funnel here so TX teardown stays consistent.
+     */
+    private void handleExternalPttUp() {
         if (getMode() == RadioMode.TX) {
             endPtt();
             callbacks.forcedPttEnd();
         }
     }
 
-    private void handlePhysicalPttDown() {
+    /**
+     * Single entry point for any out-of-band PTT press (kv4p on-device button or paired
+     * BLE PTT button). Both paths funnel here so TX setup stays consistent.
+     */
+    private void handleExternalPttDown() {
         if (getMode() == RadioMode.RX && txAllowed) { // Note that people can't hit PTT in the middle of a scan.
             startPtt();
             callbacks.forcedPttStart();

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg"
+    android:paddingTop="64dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PTT button"
+        android:textSize="28sp"
+        android:textColor="@color/primary"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/blePttCurrentPairing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:text="No PTT button paired."/>
+
+    <Button
+        android:id="@+id/blePttForgetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forget"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/blePttStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_deselected"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:text="Scanning…"/>
+
+    <ListView
+        android:id="@+id/blePttDeviceList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/primary_deselected"
+        android:dividerHeight="1dp"/>
+
+    <Button
+        android:id="@+id/blePttRescanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rescan"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/blePttWizardPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:background="@color/medium_gray">
+
+        <TextView
+            android:id="@+id/blePttWizardPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:text="Press and hold your PTT button."/>
+
+        <Button
+            android:id="@+id/blePttCancelWizardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/blePttAdvancedToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Advanced"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/blePttAdvancedPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/blePttAdvService"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Service UUID"
+            android:textColor="@color/primary"
+            android:textColorHint="@color/primary_deselected"/>
+
+        <EditText
+            android:id="@+id/blePttAdvCharacteristic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Characteristic UUID"
+            android:textColor="@color/primary"
+            android:textColorHint="@color/primary_deselected"/>
+
+        <CheckBox
+            android:id="@+id/blePttAdvInvert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert (press = 0x00)"
+            android:textColor="@color/primary"/>
+
+        <Button
+            android:id="@+id/blePttAdvSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save advanced binding"
+            android:textColor="@color/black"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/blePttDoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:textColor="@color/black"
+        android:textAllCaps="false"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

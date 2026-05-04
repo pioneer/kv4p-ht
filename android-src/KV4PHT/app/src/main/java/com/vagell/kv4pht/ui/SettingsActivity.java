@@ -71,6 +71,13 @@ public class SettingsActivity extends AppCompatActivity {
         populateAprsOptions();
         populateRadioOptions();
         populateVersions();
+        refreshBlePttSummary();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshBlePttSummary();
     }
 
     @Override
@@ -219,6 +226,23 @@ public class SettingsActivity extends AppCompatActivity {
     public void doneButtonClicked(View view) {
         setResult(Activity.RESULT_OK);
         finish();
+    }
+
+    public void blePttPairButtonClicked(View view) {
+        startActivity(new Intent(this, BlePttSetupActivity.class));
+    }
+
+    private void refreshBlePttSummary() {
+        TextView summary = findViewById(R.id.blePttSummary);
+        if (summary == null) return;
+        threadPoolExecutor.execute(() -> {
+            AppSetting s = viewModel.getAppDb().appSettingDao()
+                    .getByName(AppSetting.SETTING_BLE_PTT_BINDING);
+            com.vagell.kv4pht.radio.BlePttBinding b =
+                    s != null ? com.vagell.kv4pht.radio.BlePttBinding.deserialize(s.getValue()) : null;
+            runOnUiThread(() -> summary.setText(
+                    b != null ? b.getName() + " (" + b.getMac() + ")" : getString(R.string.ble_ptt_none)));
+        });
     }
 
     private void attachTextView(int viewId, Consumer<String> onTextChanged) {

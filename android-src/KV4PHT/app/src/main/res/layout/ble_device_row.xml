@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/bleRowName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/bleRowMac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_deselected"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/bleRowBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+</LinearLayout>

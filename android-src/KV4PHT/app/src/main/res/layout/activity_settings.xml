@@ -242,6 +242,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/jost"
+                    android:text="@string/ble_ptt_section"
+                    android:textColor="@color/primary_deselected"
+                    android:textSize="16dp"
+                    android:layout_marginTop="24dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/blePttSummary"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/jost"
+                        android:text="@string/ble_ptt_none"
+                        android:textColor="@color/primary"
+                        android:textSize="18dp"
+                        android:layout_gravity="center_vertical"/>
+
+                    <Button
+                        android:id="@+id/blePttPairButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_weight="0"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:text="@string/ble_ptt_pair"
+                        android:textSize="16dp"
+                        android:textFontWeight="500"
+                        android:textColor="@color/primary"
+                        android:textAllCaps="true"
+                        android:onClick="blePttPairButtonClicked"
+                        android:layout_gravity="end"
+                        android:padding="0dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/jost"
                     android:text="@string/aprs"
                     android:textColor="@color/primary_deselected"
                     android:textSize="16dp"

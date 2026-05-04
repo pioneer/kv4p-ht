@@ -943,6 +943,7 @@ public class MainActivity extends AppCompatActivity {
                 applyFiltersSettings(settings);
                 applyAccessibilitySettings(settings);
                 applyAprsSettings(settings);
+                applyBlePttBinding(settings);
             });
         });
     }
@@ -1044,8 +1045,7 @@ public class MainActivity extends AppCompatActivity {
         stickyPTT = Boolean.parseBoolean(settings.getOrDefault(AppSetting.SETTING_STICKY_PTT, "false"));
     }
 
-    private void applyAprsSettings(Map<String, String> settings) {
-        String accuracy = settings.get(AppSetting.SETTING_APRS_POSITION_ACCURACY);
+    private void applyAprsSettings(Map<String, String> settings) {        String accuracy = settings.get(AppSetting.SETTING_APRS_POSITION_ACCURACY);
         String beacon = settings.get(AppSetting.SETTING_APRS_BEACON_POSITION);
 
         if (accuracy != null && radioAudioService != null) {
@@ -1067,6 +1067,14 @@ public class MainActivity extends AppCompatActivity {
                 threadPoolExecutor.execute(action);
             }
         }
+    }
+
+    private void applyBlePttBinding(Map<String, String> settings) {
+        if (radioAudioService == null) return;
+        com.vagell.kv4pht.radio.BlePttBinding binding =
+                com.vagell.kv4pht.radio.BlePttBinding.deserialize(
+                        settings.get(AppSetting.SETTING_BLE_PTT_BINDING));
+        radioAudioService.setBlePttBinding(binding);
     }
 
     @SuppressLint("ClickableViewAccessibility")
