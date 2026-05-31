@@ -115,6 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
         populateMinFrequencies();
         populateMaxFrequencies();
         populateMicGainOptions();
+        populateRxGainOptions();
         populateAprsOptions();
         populateAprsFrequencies();
         populateAprsIcons();
@@ -211,6 +212,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void populateMicGainOptions() {
         setDropdownOptions(R.id.micGainBoostTextView, List.of("None", "Low", "Med", "High"));
+    }
+
+    private void populateRxGainOptions() {
+        setDropdownOptions(R.id.rxGainBoostTextView, List.of("None", "Low", "Med", "High"));
     }
 
     private void populateAprsOptions() {
@@ -331,6 +336,7 @@ public class SettingsActivity extends AppCompatActivity {
                 setDropdownIfPresent(settings, AppSetting.SETTING_MIN_70_CM_TX_FREQ, R.id.min70cmFreqTextView, mhz);
                 setDropdownIfPresent(settings, AppSetting.SETTING_MAX_70_CM_TX_FREQ, R.id.max70cmFreqTextView, mhz);
                 setDropdownIfPresent(settings, AppSetting.SETTING_MIC_GAIN_BOOST, R.id.micGainBoostTextView);
+                setDropdownIfPresent(settings, AppSetting.SETTING_RX_GAIN_BOOST, R.id.rxGainBoostTextView);
                 callback.run();
             });
         });
@@ -420,6 +426,7 @@ public class SettingsActivity extends AppCompatActivity {
         attachTextView(R.id.min70cmFreqTextView, text -> setMin70cmTxFreq(extractPrefix(text)));
         attachTextView(R.id.max70cmFreqTextView, text -> setMax70cmTxFreq(extractPrefix(text)));
         attachTextView(R.id.micGainBoostTextView, this::setMicGainBoost);
+        attachTextView(R.id.rxGainBoostTextView, this::setRxGainBoost);
         attachSwitch(R.id.stickyPTTSwitch, this::setStickyPTT);
         attachSwitch(R.id.noAnimationsSwitch, this::setNoAnimations);
         attachSwitch(R.id.aprsPositionSwitch, this::setAprsBeaconPosition);
@@ -469,6 +476,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void setMicGainBoost(String level) {
         saveAppSettingAsync(AppSetting.SETTING_MIC_GAIN_BOOST, level);
+    }
+
+    private void setRxGainBoost(String level) {
+        saveAppSettingAsync(AppSetting.SETTING_RX_GAIN_BOOST, level);
     }
 
     private void setCallsign(String callsign) {

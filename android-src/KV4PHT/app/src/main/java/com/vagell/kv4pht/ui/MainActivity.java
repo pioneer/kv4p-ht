@@ -1041,6 +1041,8 @@ public class MainActivity extends AppCompatActivity {
         if (radioAudioService == null) return;
         String gain = settings.get(AppSetting.SETTING_MIC_GAIN_BOOST);
         if (gain != null) radioAudioService.setMicGainBoost(gain);
+        String rxGain = settings.get(AppSetting.SETTING_RX_GAIN_BOOST);
+        if (rxGain != null) radioAudioService.setRxGainBoost(rxGain);
     }
 
     private void applyAccessibilitySettings(Map<String, String> settings) {

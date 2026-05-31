@@ -216,6 +216,7 @@ public class RadioAudioService extends Service {
     private Runnable pendingScanAdvance;
     private int pendingScanAdvanceMemoryId = -1;
     private MicGainBoost micGainBoost = MicGainBoost.NONE;
+    private RxGainBoost rxGainBoost = RxGainBoost.NONE;
 
     // === Android Components ===
     private final IBinder binder = new RadioBinder();
@@ -291,6 +292,10 @@ public class RadioAudioService extends Service {
 
     public void setMicGainBoost(String micGainBoost) {
         this.micGainBoost = MicGainBoost.parse(micGainBoost);
+    }
+
+    public void setRxGainBoost(String rxGainBoost) {
+        this.rxGainBoost = RxGainBoost.parse(rxGainBoost);
     }
 
     public void setAprsBeaconPosition(boolean enabled) {
@@ -1343,6 +1348,20 @@ public class RadioAudioService extends Service {
         return newAudioBuffer;
     }
 
+    /** Multiplies samples by the configured RX gain in-place, clamped to [-1, 1]. */
+    private void applyRxGain(float[] audioBuffer, int len) {
+        if (rxGainBoost == RxGainBoost.NONE) {
+            return;
+        }
+        float gain = rxGainBoost.getGain();
+        for (int i = 0; i < len; i++) {
+            float v = audioBuffer[i] * gain;
+            if (v > 1.0f) v = 1.0f;
+            else if (v < -1.0f) v = -1.0f;
+            audioBuffer[i] = v;
+        }
+    }
+
     public void sendAudioToESP32(float[] samples, boolean dataMode) {
         if (hostToEsp32 == null) {
             return; // If connection is lost, just drop the audio frame.
@@ -1481,6 +1500,7 @@ public class RadioAudioService extends Service {
 
         if ((getMode() == RadioMode.RX || getMode() == RadioMode.SCAN) && audioTrack != null) {
             AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            applyRxGain(pcmFloat, decoded);
             audioTrack.write(pcmFloat, 0, decoded, AudioTrack.WRITE_NON_BLOCKING);
             audioManager.requestAudioFocus(audioFocusRequest);
             ensureAudioPlaying();

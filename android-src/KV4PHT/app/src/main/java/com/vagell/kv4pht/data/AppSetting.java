@@ -32,6 +32,7 @@ public class AppSetting {
     public static final String SETTING_MIN_70_CM_TX_FREQ = "min70cmTxFreq";
     public static final String SETTING_MAX_70_CM_TX_FREQ = "max70cmTxFreq";
     public static final String SETTING_MIC_GAIN_BOOST = "micGainBoost";
+    public static final String SETTING_RX_GAIN_BOOST = "rxGainBoost";
     public static final String SETTING_DISABLE_ANIMATIONS = "disableAnimations";
     public static final String SETTING_APRS_POSITION_ACCURACY = "aprsPositionAccuracy";
     public static final String SETTING_APRS_BEACON_POSITION = "aprsBeaconPosition";
